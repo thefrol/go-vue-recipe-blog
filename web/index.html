@@ -12,7 +12,7 @@
           recipes: [
             {
               name: "Быстро сырники",
-              text: "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки по нажаттию раскрываются прям тут.",
+              text: "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки.",
               tags: ["Пароварка"],
             },
             {
@@ -42,9 +42,9 @@
   </head>
   <body>
     <header
-      class="mt-10 mx-3 flex flex-row flex-wrap items-baseline content-between"
+      class="mt-7 mx-3 flex flex-row flex-wrap items-baseline content-between"
     >
-      <h1 class="text-3xl font-bold text-teal-800 mr-auto pr-10">
+      <h1 class="text-3xl font-bold text-teal-600 mr-auto pr-10">
         Микро-кухня
       </h1>
       <p class="text-xl text-left">
@@ -52,7 +52,7 @@
       </p>
     </header>
     <main>
-      <div x-data="recipes()" class="flex border-gray-200 flex-row flex-wrap">
+      <div x-data="recipes()" class="flex border-gray-200 flex-row flex-wrap mt-7">
         <template x-for="recipe in recipes">
           <article
             class="max-w-sm flex-col items-start p-3 m-3 justify-between bg-teal-100 rounded-3xl"
