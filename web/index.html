@@ -18,7 +18,7 @@
             {
               name: "Банан и яйцо",
               text: "Один банан и одно яйцо взбить блендером и пожарить на сковородке. Охрененно ещё сверху намазать творогом",
-              tags: ["Сковорода","Блины"],
+              tags: ["Сковорода", "Блины"],
             },
             {
               name: "Быстро сырники3",
@@ -36,10 +36,6 @@
               tags: ["Пароварка"],
             },
           ],
-          toggleTodo: function (id) {
-            var todo = this.todos.find((todo) => todo.id === id);
-            todo.completed = !todo.completed;
-          },
         };
       }
     </script>
@@ -64,12 +60,11 @@
             <div class="flex items-center gap-x-4 text-xs">
               <template x-for="tag in recipe.tags">
                 <a
-                href="#" x-text="tag"
-                class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text--600 hover:bg-gray-100" 
-                ></a
-              >
+                  href="#"
+                  x-text="tag"
+                  class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text--600 hover:bg-gray-100"
+                ></a>
               </template>
-
             </div>
             <div class="group relative">
               <h3
@@ -77,19 +72,16 @@
               >
                 <a href="#" x-text="recipe.name">
                   <span class="absolute inset-0"></span>
-
                 </a>
-  
               </h3>
-              <p x-text="recipe.text"
-              class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-              </p>
+              <p
+                x-text="recipe.text"
+                class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600"
+              ></p>
             </div>
           </article>
         </template>
-        <!-- More posts... -->
       </div>
     </main>
   </body>
-
 </html>
