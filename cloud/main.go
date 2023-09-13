@@ -13,8 +13,7 @@ import (
 var Router = chi.NewRouter()
 
 func init() {
-	fileServer := http.FileServer(http.Dir("../web"))
-	Router.Handle("/*", fileServer)
+	Router.Route("/", files)
 
 	Router.Route("/api/v1/", func(r chi.Router) {
 		// поупражняться в gRPC
@@ -24,4 +23,9 @@ func init() {
 
 func main() {
 	http.ListenAndServe(":8080", Router)
+}
+
+func files(r chi.Router) {
+	fileServer := http.FileServer(http.Dir("../web"))
+	r.Handle("/*", fileServer)
 }
