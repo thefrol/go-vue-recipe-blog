@@ -27,5 +27,5 @@ func main() {
 
 func files(r chi.Router) {
 	fileServer := http.FileServer(http.Dir("../web"))
-	r.Handle("/*", fileServer)
+	r.Handle("/{file}", fileServer)
 }
