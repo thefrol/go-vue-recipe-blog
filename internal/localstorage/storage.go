@@ -2,7 +2,6 @@ package localstorage
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,13 +19,13 @@ import (
 type Storager interface {
 	Recipe(id string) (*data.Recipe, error)
 	SetRecipe(id string, r data.Recipe)
-	Recipes() ([]*data.Recipe, error)
+	Recipes() ([]data.Recipe, error)
 
-	Token(id string) (bool, error)
-	SetToken(id string) error
+	Tokens() ([]string, error)
+	AddToken(hash []byte) error
 
-	Password(login string) (checksum string, err error)
-	SetCredentials(login, pass string) error
+	Password(login string) (checksum []byte, err error)
+	SetPassword(login string, hash []byte) error
 }
 
 // Хранилище данных, реализовано в файлах
@@ -79,45 +78,51 @@ func (s FileStorage) Recipes() (recipes []data.Recipe, err error) {
 	return
 }
 
-const tokenFile = "tokens"
-
-func (s FileStorage) Token(token string) (bool, error) {
-	println(s.tokensFile())
+func (s FileStorage) Tokens() (hashes []string, err error) {
+	//TODO получается хранилище не только сохраняет и получает токены но и как бы их проверяет, это по дурацки как-то
 	bb, err := os.ReadFile(s.tokensFile())
 
 	if err != nil {
 		fmt.Println("Не создан файл токенов /web/.storage/tokens")
-		return false, err
+		return nil, err
 	}
 
-	for _, tokenHash := range bytes.Split(bb, []byte("\n")) {
-		tokenHash = bytes.TrimSpace(tokenHash)
-		if bytes.Compare(hash(token), tokenHash) == 0 {
-			return true, nil
-		}
+	for _, hash := range bytes.Split(bb, []byte("\n")) {
+		hash = bytes.TrimSpace(hash)
+		hashes = append(hashes, string(hash))
 	}
-	return false, nil
+	return hashes, nil
 }
 
-func (s FileStorage) SetToken(token string) error {
+func (s FileStorage) AddToken(hash []byte) error {
 	f, err := os.OpenFile(s.tokensFile(), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return err
 	}
 	f.Write([]byte("\n"))
-	f.Write(hash(token))
+	f.Write(hash)
 	return nil
 }
 
-func (s FileStorage) Password(login string) (checksum string, err error) {
-	panic("not implemented") // TODO: Implement
+func (s FileStorage) Password(login string) (checksum []byte, err error) {
+	bb, err := os.ReadFile(s.passhashFile(login))
+	if err != nil {
+		return nil, err
+	}
+	return bb, nil
 }
 
-func (s FileStorage) SetCredentials(login string, pass string) error {
-	panic("not implemented") // TODO: Implement
+func (s FileStorage) SetPassword(login string, hash []byte) error {
+	err := os.WriteFile(s.passhashFile(login), hash, os.FileMode(os.O_WRONLY|os.O_CREATE))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
+const tokenFile = "tokens"
 const recipeFolderName = "recipe"
+const passHashExt = ".passhash"
 
 func (s FileStorage) recipeFolder() string {
 	return path.Join(s.folder, recipeFolderName)
@@ -127,7 +132,8 @@ func (s FileStorage) tokensFile() string {
 	return path.Join(s.folder, tokenFile)
 }
 
-func hash(value string) []byte {
-	h := sha256.Sum256([]byte(value))
-	return h[:]
+func (s FileStorage) passhashFile(login string) string {
+	return path.Join(s.folder, login+passHashExt)
 }
+
+var _ Storager = new(FileStorage)
