@@ -15,8 +15,14 @@ var Router = chi.NewRouter()
 func init() {
 	fileServer := http.FileServer(http.Dir("../web"))
 	Router.Handle("/*", fileServer)
+
 	// admining
 	Router.Route("/edit", func(r chi.Router) {
+		// TODO
+		// мне видятся разные пакеты для апи и веба, а так же для мидлвари тоже
+		// возможно и отдельные переменные, как минимум роутер в отдельный файл
+		// admin/web/api
+		r.Use(handlers.PinAuthorization, handlers.CookieAuthorization, handlers.BlockUnauthorized)
 		r.Get("/*", handlers.Edit)
 	})
 
