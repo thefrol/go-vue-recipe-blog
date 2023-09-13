@@ -17,6 +17,7 @@ func init() {
 	Router.Handle("/*", fileServer)
 	// admining
 	Router.Route("/edit", func(r chi.Router) {
+		r.Use(handlers.Authorization)
 		r.Get("/*", http.NotFound)
 	})
 
