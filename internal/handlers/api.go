@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
+	"path"
 
 	"github.com/thefrol/go-vue-recipe-blog/internal/data"
 )
@@ -11,30 +14,44 @@ type RecipesResponse struct {
 	Recipes []data.Recipe `json:"recipes"`
 }
 
+const (
+	recipesFolder = "../web/recipe/"
+)
+
 func RecipesHandler(w http.ResponseWriter, r *http.Request) {
-	recipes := []data.Recipe{
-		{
-			Name: "Быстро сырники",
-			Text: "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки.",
-			Tags: []string{"Пароварка"},
-		},
-		{
-			Name: "Банан и яйцо",
-			Text: "Один банан и одно яйцо взбить блендером и пожарить на сковородке. Охрененно ещё сверху намазать творогом",
-			Tags: []string{"Сковорода", "Блины"},
-		},
-		{
-			Name: "Быстро блинчики",
-			Text: "Стакан молока, яйцо, 2 столовые ложки муки. Взбить в ешейкере пожарить.",
-			Tags: []string{"Сковородка"},
-		},
-		// TODO
-		// нейросеть считает каллорийность этих блюд по рецепту))
+	files, err := os.ReadDir(recipesFolder)
+	if err != nil {
+		fmt.Printf("Cant read recipes folder: %+v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+
+	var recipes []data.Recipe
+
+	for _, f := range files {
+		if f.IsDir() {
+			continue
+		}
+
+		bb, err := os.ReadFile(path.Join(recipesFolder, f.Name()))
+		if err != nil {
+			fmt.Printf("Cant read recipes file %v: %+v", f.Name(), err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		recipe := data.Recipe{}
+		json.Unmarshal(bb, &recipe)
+		recipes = append(recipes, recipe)
+	}
+
+	// TODO
+	// нейросеть считает каллорийность этих блюд по рецепту))
 
 	response := RecipesResponse{Recipes: recipes}
 	bb, err := json.Marshal(response)
 	if err != nil {
+		fmt.Printf("Cant marshal a json with recipes: %+v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
