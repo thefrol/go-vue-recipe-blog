@@ -26,7 +26,7 @@ func init() {
 	// api
 	Router.Route("/api/v1/", func(r chi.Router) {
 		// поупражняться в gRPC
-		r.Get("/recipes", handlers.RecipesHandler)
+		r.Get("/recipes", handlers.Recipes)
 	})
 }
 

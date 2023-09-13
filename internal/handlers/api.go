@@ -18,7 +18,7 @@ const (
 	recipesFolder = "../web/recipe/"
 )
 
-func RecipesHandler(w http.ResponseWriter, r *http.Request) {
+func Recipes(w http.ResponseWriter, r *http.Request) {
 	files, err := os.ReadDir(recipesFolder)
 	if err != nil {
 		fmt.Printf("Cant read recipes folder: %+v", err)
