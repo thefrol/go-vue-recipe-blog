@@ -19,7 +19,7 @@ const (
 
 var store = localstorage.New(storageFolder)
 
-//my token "123lasudhjnqwoealskndlajwjelijqwe"
+// my token "123lasudhjnqwoealskndlajwjelijqwe" my pass "mypass"
 
 func RecipesHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO
