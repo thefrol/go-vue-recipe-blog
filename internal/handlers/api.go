@@ -19,6 +19,8 @@ const (
 
 var store = localstorage.New(storageFolder)
 
+//my token "123lasudhjnqwoealskndlajwjelijqwe"
+
 func RecipesHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO
 	// нейросеть считает каллорийность этих блюд по рецепту))

@@ -1,6 +1,8 @@
 package localstorage
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,21 +22,20 @@ type Storager interface {
 	SetRecipe(id string, r data.Recipe)
 	Recipes() ([]*data.Recipe, error)
 
-	Token(id string) bool
-	SetToken(id string)
+	Token(id string) (bool, error)
+	SetToken(id string) error
 
 	Password(login string) (checksum string, err error)
-	SetCredentials(login, pass string)
+	SetCredentials(login, pass string) error
 }
 
 // Хранилище данных, реализовано в файлах
 // в папке .storage
 //
-// - Токены хранятся захешированно в файле tokens.
-// - Пароли хранятся в файлах вида <login>.passhash,
-// 		где внутри файла хеш пароля
-// - Рецепты лежат в папке recipe
-
+//   - Токены хранятся захешированно в файле tokens.
+//   - Пароли хранятся в файлах вида <login>.passhash,
+//     где внутри файла хеш пароля
+//   - Рецепты лежат в папке recipe
 type FileStorage struct {
 	folder string
 }
@@ -78,19 +79,41 @@ func (s FileStorage) Recipes() (recipes []data.Recipe, err error) {
 	return
 }
 
-func (s FileStorage) Token(id string) bool {
-	panic("not implemented") // TODO: Implement
+const tokenFile = "tokens"
+
+func (s FileStorage) Token(token string) (bool, error) {
+	println(s.tokensFile())
+	bb, err := os.ReadFile(s.tokensFile())
+
+	if err != nil {
+		fmt.Println("Не создан файл токенов /web/.storage/tokens")
+		return false, err
+	}
+
+	for _, tokenHash := range bytes.Split(bb, []byte("\n")) {
+		tokenHash = bytes.TrimSpace(tokenHash)
+		if bytes.Compare(hash(token), tokenHash) == 0 {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
-func (s FileStorage) SetToken(id string) {
-	panic("not implemented") // TODO: Implement
+func (s FileStorage) SetToken(token string) error {
+	f, err := os.OpenFile(s.tokensFile(), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		return err
+	}
+	f.Write([]byte("\n"))
+	f.Write(hash(token))
+	return nil
 }
 
 func (s FileStorage) Password(login string) (checksum string, err error) {
 	panic("not implemented") // TODO: Implement
 }
 
-func (s FileStorage) SetCredentials(login string, pass string) {
+func (s FileStorage) SetCredentials(login string, pass string) error {
 	panic("not implemented") // TODO: Implement
 }
 
@@ -98,6 +121,10 @@ const recipeFolderName = "recipe"
 
 func (s FileStorage) recipeFolder() string {
 	return path.Join(s.folder, recipeFolderName)
+}
+
+func (s FileStorage) tokensFile() string {
+	return path.Join(s.folder, tokenFile)
 }
 
 func hash(value string) []byte {
