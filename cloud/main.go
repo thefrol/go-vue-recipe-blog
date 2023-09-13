@@ -15,7 +15,14 @@ var Router = chi.NewRouter()
 func init() {
 	fileServer := http.FileServer(http.Dir("../web"))
 	Router.Handle("/*", fileServer)
+	// admining
+	Router.Route("/edit", func(r chi.Router) {
+		r.Get("/*", http.NotFound)
+	})
 
+	Router.Get("/login", http.NotFound)
+
+	// api
 	Router.Route("/api/v1/", func(r chi.Router) {
 		// поупражняться в gRPC
 		r.Get("/recipes", handlers.RecipesHandler)
