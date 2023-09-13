@@ -27,7 +27,7 @@ func main() {
 
 func files(r chi.Router) {
 	fileServer := http.FileServer(http.Dir("../web"))
-	r.Handle("/{file}", fileServer)
+	r.Handle("/", fileServer) // только index.html доступен извне в корневом каталоге
 	r.Handle("/css/{file}", fileServer)
 	r.Handle("/script/{file}", fileServer)
 }
