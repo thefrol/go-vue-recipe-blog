@@ -99,3 +99,8 @@ const recipeFolderName = "recipe"
 func (s FileStorage) recipeFolder() string {
 	return path.Join(s.folder, recipeFolderName)
 }
+
+func hash(value string) []byte {
+	h := sha256.Sum256([]byte(value))
+	return h[:]
+}
