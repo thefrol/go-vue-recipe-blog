@@ -1,7 +1,45 @@
 package handlers
 
-import "github.com/thefrol/go-vue-recipe-blog/internal/data"
+import (
+	"net/http"
+
+	"github.com/thefrol/go-vue-recipe-blog/internal/data"
+)
 
 type RecipesResponse struct {
 	Recipes []data.Recipe `json:"recipes"`
+}
+
+func RecipesHandler(w http.ResponseWriter, r *http.Request) {
+	json := `
+		{
+			"recipes": [{
+					"name": "Быстро сырники",
+					"text": "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки.",
+					"tags": ["Пароварка"]
+				},
+				{
+					"name": "Банан и яйцо",
+					"text": "Один банан и одно яйцо взбить блендером и пожарить на сковородке. Охрененно ещё сверху намазать творогом",
+					"tags": ["Сковорода", "Блины"]
+				},
+				{
+					"name": "Быстро сырники3",
+					"text": "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки по нажаттию раскрываются прям тут.",
+					"tags": ["Пароварка"]
+				},
+				{
+					"name": "Быстро сырники4",
+					"text": "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки по нажаттию раскрываются прям тут.",
+					"tags": ["Пароварка"]
+				},
+				{
+					"name": "Быстро232 сырники5",
+					"text": "баночка обезжиренного йогурта 120г, 1 яйцо, 2 столовые ложки муки по нажаттию раскрываются прям тут.",
+					"tags": ["Пароварка"]
+				}
+			]
+		}`
+	w.Header().Add("Content-Type", "appliation/json")
+	w.Write([]byte(json))
 }
