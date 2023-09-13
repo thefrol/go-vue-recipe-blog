@@ -5,11 +5,20 @@
 
 ### Стек
 
-+ Tailwind
-+ Alpine.js
 + chi
 + go
 + Yandex.Cloud Object Storage
+
+Изучается
++ Tailwind
++ Alpine.js
++ CSS
++ HTML
+
+А ещё можно изучить
++ REST
++ GRPC
++ YDB
 
 
 # Будущее
