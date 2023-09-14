@@ -11,24 +11,7 @@ import (
 	"github.com/thefrol/go-vue-recipe-blog/internal/data"
 )
 
-// Storager дает доступ до основых сущеностей так,
-// чтобы мы могли не париться над тем, как они там лежат
-// мы можем получить нужные рецепты и установить токены
-// проверить логин и пароль
-
-type Storager interface {
-	Recipe(id string) (*data.Recipe, error)
-	SetRecipe(id string, r data.Recipe)
-	Recipes() ([]data.Recipe, error)
-
-	Tokens() ([]string, error)
-	AddToken(hash []byte) error
-
-	Password(login string) (checksum []byte, err error)
-	SetPassword(login string, hash []byte) error
-}
-
-// Хранилище данных, реализовано в файлах
+// FileStorage Хранилище данных, реализовано в файлах
 // в папке .storage
 //
 //   - Токены хранятся захешированно в файле tokens.
