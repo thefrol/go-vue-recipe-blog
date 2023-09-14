@@ -14,7 +14,7 @@ import (
 var Router = chi.NewRouter()
 
 func init() {
-	Router.Use(middleware.PinAuthorization, middleware.CookieAuthorization)
+	Router.Use(middleware.CookieAuthorization)
 
 	Router.Route("/", files)
 
