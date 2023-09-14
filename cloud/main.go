@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/thefrol/go-vue-recipe-blog/internal/handlers"
+	"github.com/thefrol/go-vue-recipe-blog/internal/middleware"
 )
 
 var Router = chi.NewRouter()
@@ -21,7 +22,7 @@ func init() {
 		// мне видятся разные пакеты для апи и веба, а так же для мидлвари тоже
 		// возможно и отдельные переменные, как минимум роутер в отдельный файл
 		// admin/web/api
-		r.Use(handlers.PinAuthorization, handlers.CookieAuthorization, handlers.RequireAuthorization)
+		r.Use(middleware.PinAuthorization, middleware.CookieAuthorization, middleware.RequireAuthorization)
 		r.Get("/*", handlers.Edit)
 	})
 
