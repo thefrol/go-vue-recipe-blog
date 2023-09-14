@@ -14,6 +14,8 @@ import (
 var Router = chi.NewRouter()
 
 func init() {
+	Router.Use(middleware.PinAuthorization, middleware.CookieAuthorization)
+
 	Router.Route("/", files)
 
 	// admining
@@ -22,7 +24,9 @@ func init() {
 		// мне видятся разные пакеты для апи и веба, а так же для мидлвари тоже
 		// возможно и отдельные переменные, как минимум роутер в отдельный файл
 		// admin/web/api
-		r.Use(middleware.PinAuthorization, middleware.CookieAuthorization, middleware.RequireAuthorization)
+
+		//Требуется авторизация
+		r.Use(middleware.RequireAuthorization)
 		r.Get("/*", handlers.Edit)
 	})
 
