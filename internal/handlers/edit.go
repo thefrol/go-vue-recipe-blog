@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/thefrol/go-vue-recipe-blog/internal/utils"
 )
 
 const (
@@ -56,9 +58,14 @@ func PinAuthorization(next http.Handler) http.Handler {
 			// TODO
 			// Выделить это в отдельную функцию
 
+			//store cookie
+			t := utils.UUID()
+			store.AddToken(utils.Hash(t))
+
+			//set cookie
 			cookie := http.Cookie{}
 			cookie.Name = cookieName
-			cookie.Value = cookieToken
+			cookie.Value = t
 			cookie.Expires = time.Now().Add(cookieLifeDays * 24 * time.Hour)
 			cookie.Secure = false
 			cookie.HttpOnly = true
@@ -76,12 +83,7 @@ func PinAuthorization(next http.Handler) http.Handler {
 func CookieAuthorization(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		c, err := r.Cookie(cookieName)
-		if err != nil {
-			fmt.Printf("Wrong cookie. Request cookie: %v\n", c)
-		} else if cookieToken == c.Value {
-
+		if findCookie(r) {
 			// TODO
 			// тоже выделить во что-то отдельное
 			rc := r.Context()
@@ -89,7 +91,6 @@ func CookieAuthorization(next http.Handler) http.Handler {
 			r = r.WithContext(ctx)
 			fmt.Println("Authorized by cookie")
 		}
-
 		next.ServeHTTP(w, r)
 	})
 }
@@ -100,7 +101,7 @@ func RequireAuthorization(next http.Handler) http.Handler {
 		var auth string
 		var ok bool
 		if auth, ok = ii.(string); !ok {
-			fmt.Println("Edit handler not getting auth=ok")
+			fmt.Printf("Autorization required at %v not getting auth=ok\n", r.URL.Path)
 			// w.WriteHeader(http.StatusInternalServerError)
 			// return
 		}
@@ -108,7 +109,23 @@ func RequireAuthorization(next http.Handler) http.Handler {
 			http.Error(w, "Not authorized", http.StatusUnauthorized)
 			return
 		}
-		fmt.Print("AUTH OK")
+		fmt.Println("AUTH OK")
 		next.ServeHTTP(w, r)
 	})
+}
+
+// findCookie проверяет есть ли нужный куки в запросе и сверяет его хеш,
+// с уже хранимыми хешами, если есть совпадение вернет true первым параметром
+func findCookie(r *http.Request) bool {
+	c, err := r.Cookie(cookieName)
+	if err != nil {
+		fmt.Printf("Cookie %v not found in cookies \n", c)
+		return false
+	}
+	found, err := store.Token(utils.Hash(c.Value))
+	if err != nil {
+		fmt.Printf("Token not found: %v\n", c)
+		return false
+	}
+	return found
 }
