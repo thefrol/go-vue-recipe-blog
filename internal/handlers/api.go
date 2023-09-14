@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
-	"path"
 
 	"github.com/thefrol/go-vue-recipe-blog/internal/data"
+	"github.com/thefrol/go-vue-recipe-blog/internal/localstorage"
 )
 
 type RecipesResponse struct {
@@ -15,38 +14,25 @@ type RecipesResponse struct {
 }
 
 const (
-	recipesFolder = "../web/recipe/"
+	storageFolder = "../web/.storage/"
 )
 
+var store = localstorage.New(storageFolder)
+
+// my token "123lasudhjnqwoealskndlajwjelijqwe" my pass "mypass"
+
 func Recipes(w http.ResponseWriter, r *http.Request) {
-	files, err := os.ReadDir(recipesFolder)
-	if err != nil {
-		fmt.Printf("Cant read recipes folder: %+v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	var recipes []data.Recipe
-
-	for _, f := range files {
-		if f.IsDir() {
-			continue
-		}
-
-		bb, err := os.ReadFile(path.Join(recipesFolder, f.Name()))
-		if err != nil {
-			fmt.Printf("Cant read recipes file %v: %+v", f.Name(), err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		recipe := data.Recipe{}
-		json.Unmarshal(bb, &recipe)
-		recipes = append(recipes, recipe)
-	}
-
 	// TODO
 	// нейросеть считает каллорийность этих блюд по рецепту))
+
+	recipes, err := store.Recipes()
+	if err != nil {
+		// TODO
+		// хелпер такого вида
+		// Respond(w, Code, msg)
+		http.Error(w, "Не могу получить рецепты из хранилища;"+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	response := RecipesResponse{Recipes: recipes}
 	bb, err := json.Marshal(response)

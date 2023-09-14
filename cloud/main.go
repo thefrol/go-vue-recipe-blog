@@ -13,8 +13,7 @@ import (
 var Router = chi.NewRouter()
 
 func init() {
-	fileServer := http.FileServer(http.Dir("../web"))
-	Router.Handle("/*", fileServer)
+	Router.Route("/", files)
 
 	// admining
 	Router.Route("/edit", func(r chi.Router) {
@@ -30,11 +29,17 @@ func init() {
 
 	// api
 	Router.Route("/api/v1/", func(r chi.Router) {
-		// поупражняться в gRPC
 		r.Get("/recipes", handlers.Recipes)
 	})
 }
 
 func main() {
 	http.ListenAndServe(":8080", Router)
+}
+
+func files(r chi.Router) {
+	fileServer := http.FileServer(http.Dir("../web"))
+	r.Handle("/", fileServer) // только index.html доступен извне в корневом каталоге
+	r.Handle("/css/{file}", fileServer)
+	r.Handle("/script/{file}", fileServer)
 }
