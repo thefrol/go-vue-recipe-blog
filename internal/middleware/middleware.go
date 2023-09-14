@@ -52,12 +52,13 @@ func RequireAuthorization(next http.Handler) http.Handler {
 		var auth string
 		var ok bool
 		if auth, ok = ii.(string); !ok {
-			fmt.Printf("Autorization required at %v not getting auth=ok\n", r.URL.Path)
-			// w.WriteHeader(http.StatusInternalServerError)
+			fmt.Printf("Autorization required at %v not getting auth\n", r.URL.Path)
+			http.Redirect(w, r, "/login", http.StatusFound)
+
 			// return
 		}
 		if auth != "ok" {
-			http.Error(w, "Not authorized", http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 		fmt.Println("AUTH OK")
