@@ -7,19 +7,24 @@ import (
 	"path"
 )
 
-func (s FileStorage) Tokens() (hashes []string, err error) {
+// TODO
+// По хорошему хранить бы не только токены, но ещё и acl токена - права, и где он действует и когда перестанет работать
+
+func (s FileStorage) Token(hash []byte) (found bool, err error) {
 	bb, err := os.ReadFile(s.tokensFile())
 
 	if err != nil {
 		fmt.Println("Не создан файл токенов /web/.storage/tokens")
-		return nil, err
+		return false, err
 	}
 
-	for _, hash := range bytes.Split(bb, []byte("\n")) {
-		hash = bytes.TrimSpace(hash)
-		hashes = append(hashes, string(hash))
+	for _, h := range bytes.Split(bb, []byte("\n")) {
+		h = bytes.TrimSpace(h)
+		if bytes.Compare(hash, h) == 0 {
+			return true, nil
+		}
 	}
-	return hashes, nil
+	return false, nil
 }
 
 func (s FileStorage) AddToken(hash []byte) error {
