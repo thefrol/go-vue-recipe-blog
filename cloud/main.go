@@ -19,6 +19,7 @@ func init() {
 	Router.Route("/", files)
 
 	// admining
+	Router.Get("/login", Login)
 	Router.Route("/edit", func(r chi.Router) {
 		// TODO
 		// мне видятся разные пакеты для апи и веба, а так же для мидлвари тоже
@@ -29,8 +30,6 @@ func init() {
 		r.Use(middleware.RequireAuthorization)
 		r.Get("/*", handlers.Edit)
 	})
-
-	Router.Get("/login", http.NotFound)
 
 	// api
 	Router.Route("/api/v1/", func(r chi.Router) {
@@ -47,4 +46,8 @@ func files(r chi.Router) {
 	r.Handle("/", fileServer) // только index.html доступен извне в корневом каталоге
 	r.Handle("/css/{file}", fileServer)
 	r.Handle("/script/{file}", fileServer)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "../web/login.html")
 }

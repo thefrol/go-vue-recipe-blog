@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      function LoginForm() {
+        return {
+          Credentials: {
+            login:"",
+            pass:"",
+          },
+          submit() {
+            axios({
+            method: 'get',
+            url: '/api/v1/recipes'
+          })
+            .then((response) => {
+              this.recipes = response.data.recipes
+            })
+            .catch((error) => {
+              console.error(error)
+            });
+          },
+        };
+      }
+    </script>
+  </head>
+
+  <body class="h-full bg-gradient-to-t from-slate-50 to-teal-600">
+    <div
+      class="grid h-screen w-screen grid-cols-2 grid-rows-5 lg:grid-cols-4 lg:grid-rows-5 text-teal-600"
+    >
+      <div class="row-start-1 col-span-full"></div>
+      <div
+        class="row-start-1 col-start-1 col-span-2 lg:col-start-2 text-slate-50"
+      >
+        <header
+          class="mt-7 mx-3 flex flex-row flex-wrap items-baseline content-between"
+        >
+          <h1 class="font-bold mr-auto pr-10 text-5xl">Микро-кухня</h1>
+
+          <p class="text-3xl text-left">время админов</p>
+        </header>
+      </div>
+
+      <div
+        class="grid rounded-xl bg-teal-600 m-10 p-10 lg:row-start-2 lg:col-start-2 col-span-2 row-span-3 text-gray-100 bg-gradient-to-t from-slate-50 to-teal-600 text-slate-50 text-3xl"
+      >
+        <main>
+          <form x-data="LoginForm()" method=POST>
+            <div class="mb-3">
+              логин: <input class="bg-transparent" required x-model="Credentials.login"/>
+            </div>
+            <div class="mb-3">
+              пароль: <input class="bg-transparent w-auto" required x-model="Credentials.pass"/>
+            </div>
+            <button class="mb-3">зайти</button>
+          </form>
+        </main>
+      </div>
+      <div class="col-span-full">
+        <footer></footer>
+      </div>
+    </div>
+  </body>
+  <style type="text/css" media="screen">
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+      outline: none;
+    }
+  </style>
+</html>
