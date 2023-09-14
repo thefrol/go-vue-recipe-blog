@@ -20,6 +20,7 @@ func init() {
 
 	// admining
 	Router.Get("/login", Login)
+	Router.Post("/login", handlers.Authorize)
 	Router.Route("/edit", func(r chi.Router) {
 		// TODO
 		// мне видятся разные пакеты для апи и веба, а так же для мидлвари тоже
