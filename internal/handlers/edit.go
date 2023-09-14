@@ -94,10 +94,7 @@ func CookieAuthorization(next http.Handler) http.Handler {
 	})
 }
 
-// IDEA
-// ещё одну мидлварь - куки сеттер, если не установлено и ты авторизован
-
-func BlockUnauthorized(next http.Handler) http.Handler {
+func RequireAuthorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ii := r.Context().Value(authContextParam)
 		var auth string

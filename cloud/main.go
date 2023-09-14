@@ -21,7 +21,7 @@ func init() {
 		// мне видятся разные пакеты для апи и веба, а так же для мидлвари тоже
 		// возможно и отдельные переменные, как минимум роутер в отдельный файл
 		// admin/web/api
-		r.Use(handlers.PinAuthorization, handlers.CookieAuthorization, handlers.BlockUnauthorized)
+		r.Use(handlers.PinAuthorization, handlers.CookieAuthorization, handlers.RequireAuthorization)
 		r.Get("/*", handlers.Edit)
 	})
 
