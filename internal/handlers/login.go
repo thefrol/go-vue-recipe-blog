@@ -45,5 +45,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	cookie.Path = "/"
 	http.SetCookie(w, &cookie)
 
+	// TODO
+	// Надо чтобы он ещё запоминал, куда шел пользователь и выбрасывал на нужную страницу
 	http.Redirect(w, r, "/edit/22", http.StatusFound) // todo что делает StatusFound - переделывает в GET запрос?
 }
