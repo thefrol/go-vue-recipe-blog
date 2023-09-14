@@ -1,5 +1,6 @@
 .*
 !.storage
+tokens
 
 
 __debug_*
