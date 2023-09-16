@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -63,7 +64,7 @@ func GetRecipe(w http.ResponseWriter, r *http.Request) {
 	response := recipe
 	bb, err := json.Marshal(response)
 	if err != nil {
-		fmt.Printf("Cant marshal a json with recipes: %+v", err)
+		fmt.Printf("Cant marshal a json with %v recipe: %+v", id, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -73,5 +74,33 @@ func GetRecipe(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostRecipe(w http.ResponseWriter, r *http.Request) { // todo, а что если есть какая-то структура с функциями или мапа! Типа поторая сразу содержит get, post, delete. уже похоже на rpc
+	id := chi.URLParam(r, "id")
+
+	if r.Body == nil {
+		http.Error(w, "пришло пустое тело", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	body, err := io.ReadAll(r.Body) // todo посмотреть как это делали в практикуме
+	if err != nil {
+		// TODO
+		// хелпер такого вида
+		// Respond(w, Code, msg)
+		http.Error(w, "Не могу получить рецепт из хранилища;"+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	recipe := new(data.Recipe)
+	err = json.Unmarshal(body, recipe)
+	if err != nil {
+
+		//TODO это тоже можно выделить в функцию!
+		fmt.Printf("Cant unmarshal a json with %v recipe: %+v", id, err)
+		http.Error(w, "Cant unmarshal a json", http.StatusBadRequest)
+		return
+	}
+
+	store.SetRecipe(id, *recipe)
 	w.Header().Add("Content-Type", "appliation/json")
 }
