@@ -71,3 +71,7 @@ func GetRecipe(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "appliation/json")
 	w.Write([]byte(bb))
 }
+
+func PostRecipe(w http.ResponseWriter, r *http.Request) { // todo, а что если есть какая-то структура с функциями или мапа! Типа поторая сразу содержит get, post, delete. уже похоже на rpc
+	w.Header().Add("Content-Type", "appliation/json")
+}
