@@ -35,6 +35,7 @@ func init() {
 	// api
 	Router.Route("/api/v1/", func(r chi.Router) {
 		r.Get("/recipes", handlers.Recipes)
+		r.Get("/recipe/{id}", handlers.GetRecipe)
 	})
 }
 
