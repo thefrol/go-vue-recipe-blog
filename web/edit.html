@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    function recipes() {
+      return {
+        recipes: {},
+        err:null,
+        getRecipes: function () {
+          let r = 0
+          axios({
+            method: 'get',
+            url: '/api/v1/recipes'
+          })
+            .then((response) => {
+              this.recipes = response.data.recipes
+            })
+            .catch((error) => {
+              console.error(error)
+            });
+          return r
+        }
+      };
+    }
+  </script>
+</head>
+
+<body>
+  <header class="mt-7 mx-3 flex flex-row flex-wrap items-baseline content-between">
+    <h1 class="text-3xl font-bold text-teal-600 mr-auto pr-10">
+      Микро-кухня
+    </h1>
+
+    <p class="text-xl text-left">
+      Cборник рецептов на одного, клевые идеи для дома
+    </p>
+  </header>
+  <main>
+    <div x-data="recipes()" x-init="getRecipes()" class="flex border-gray-200 flex-row flex-wrap mt-7">
+      <template x-for="recipe in recipes">
+      </template>
+    </div>
+  </main>
+</body>
+
+</html>
