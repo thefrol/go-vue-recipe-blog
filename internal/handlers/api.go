@@ -101,6 +101,11 @@ func PostRecipe(w http.ResponseWriter, r *http.Request) { // todo, а что е�
 		return
 	}
 
-	store.SetRecipe(id, *recipe)
+	err = store.SetRecipe(id, *recipe)
+	if err != nil {
+		fmt.Printf("Cant save %v recipe: %+v", id, err)
+		http.Error(w, "Cant save a recipe", http.StatusBadRequest)
+	}
+
 	w.Header().Add("Content-Type", "appliation/json")
 }
