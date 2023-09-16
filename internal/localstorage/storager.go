@@ -11,7 +11,7 @@ type Storager interface {
 	SetRecipe(id string, r data.Recipe)
 	Recipes() ([]data.Recipe, error)
 
-	Tokens() ([]string, error)
+	Token(hash []byte) (found bool, err error)
 	AddToken(hash []byte) error
 
 	Password(login string) (checksum []byte, err error)

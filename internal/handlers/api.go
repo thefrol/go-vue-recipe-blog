@@ -21,7 +21,7 @@ var store = localstorage.New(storageFolder)
 
 // my token "123lasudhjnqwoealskndlajwjelijqwe" my pass "mypass"
 
-func RecipesHandler(w http.ResponseWriter, r *http.Request) {
+func Recipes(w http.ResponseWriter, r *http.Request) {
 	// TODO
 	// нейросеть считает каллорийность этих блюд по рецепту))
 
