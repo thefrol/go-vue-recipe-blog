@@ -13,7 +13,6 @@
         recipes: {},
         err:null,
         getRecipes: function () {
-          let r = 0
           axios({
             method: 'get',
             url: '/api/v1/recipes'
@@ -24,7 +23,6 @@
             .catch((error) => {
               console.error(error)
             });
-          return r
         }
       };
     }
