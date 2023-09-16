@@ -5,5 +5,5 @@ import (
 )
 
 func Edit(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Вы авторизированы. Привет! Могу сказать сколько ещё будет жить токен"))
+	http.ServeFile(w, r, "../web/edit.html")
 }
