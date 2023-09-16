@@ -8,7 +8,7 @@ import "github.com/thefrol/go-vue-recipe-blog/internal/data"
 // проверить логин и пароль
 type Storager interface {
 	Recipe(id string) (*data.Recipe, error) // странно что тут мы обрабатываем данные, а в токенах нет, думаю, это должны быть какие-то другие все же слои этим заниматься #todo
-	SetRecipe(id string, r data.Recipe)
+	SetRecipe(id string, r data.Recipe) error
 	Recipes() ([]data.Recipe, error)
 
 	Token(hash []byte) (found bool, err error)
