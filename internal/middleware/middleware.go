@@ -35,8 +35,6 @@ func CookieAuthorization(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if findCookie(r) {
-			// TODO
-			// тоже выделить во что-то отдельное
 			rc := r.Context()
 			ctx := context.WithValue(rc, authContextParam, "ok")
 			r = r.WithContext(ctx)
