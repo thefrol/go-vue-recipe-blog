@@ -28,9 +28,15 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Wrong login/pass", http.StatusUnauthorized)
 		return
 	}
-	// TODO
-	// Выделить это в отдельную функцию
 
+	http.SetCookie(w, makeCookie())
+
+	// TODO
+	// Надо чтобы он ещё запоминал, куда шел пользователь и выбрасывал на нужную страницу
+	http.Redirect(w, r, "/edit/22", http.StatusFound) // todo что делает StatusFound - переделывает в GET запрос?
+}
+
+func makeCookie() *http.Cookie {
 	//store cookie
 	t := utils.UUID()
 	store.AddToken(utils.Hash(t))
@@ -43,9 +49,6 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	cookie.Secure = false
 	cookie.HttpOnly = true
 	cookie.Path = "/"
-	http.SetCookie(w, &cookie)
 
-	// TODO
-	// Надо чтобы он ещё запоминал, куда шел пользователь и выбрасывал на нужную страницу
-	http.Redirect(w, r, "/edit/22", http.StatusFound) // todo что делает StatusFound - переделывает в GET запрос?
+	return &cookie
 }
