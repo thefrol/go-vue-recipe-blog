@@ -12,12 +12,12 @@
       return {
         recipe: {},
         err:null,
-        apiUrl: function(){
+        get apiUrl(){
             return '/api/v1/recipe/'+this.recipeId
         },
         get recipeId(){
-            const url=window.location.href
-            return url.match(/(?<=(\/pull\/))\d*/); //#toto а если ошибка? и тут вообще это не получается?
+            const url=window.location.pathname
+            return url.replace(/^\/edit\//, ''); //#toto а если ошибка? и тут вообще это не получается?
         },
         getRecipe: function () {
           axios({
@@ -25,13 +25,15 @@
             url: this.apiUrl
           })
             .then((response) => {
-              this.recipes = response.data.recipes
+              this.recipe = response.data
+              console.log(this.recipe) // todo если такого нецепта нет, создать типовой
             })
             .catch((error) => {
               console.error(error)
             });
         },
         submitRecipe: function () {
+          console.log(this.recipe)
           axios.post(this.apiUrl,this.recipe)
             .then((response) => {
               console.log(response.data)
@@ -56,7 +58,16 @@
     </p>
   </header>
   <main>
-    <div x-data="recipe()" x-init="getRecipe()" class="flex border-gray-200 flex-row flex-wrap mt-7">
+    <div x-data="recipe()" x-init="getRecipe()" class="border-gray-200 flex-row flex-wrap mt-7">
+      <div class="mb-4">
+        <input class="text-3xl block mb-4" x-model="recipe.name">
+        <textarea class="w-2/3 block h-40 mb-4" x-model="recipe.text"></textarea>
+
+        <template x-for="tag in recipe.tags" >
+          <p x-text="tag"></p>
+        </template>
+      </div>
+        <button class="bg-teal-600 rounded-3xl p-2 text-xl text-stone-50" @click="submitRecipe()">Сохранить</button>
     </div>
   </main>
 </body>
