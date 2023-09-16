@@ -10,6 +10,8 @@ import (
 )
 
 func (s FileStorage) Recipe(id string) (*data.Recipe, error) {
+	// TODO
+	// на данный момент он выдает рецепт с постфиксом .json, c этим надо разобраться, и не в роутинге
 	bb, err := os.ReadFile(path.Join(s.recipeFolder(), id))
 	if err != nil {
 		return nil, fmt.Errorf("Cant read recipe with id %v: %+v", id, err)
