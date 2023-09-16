@@ -8,15 +8,21 @@
   <script src="https://unpkg.com/alpinejs" defer></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
-    function recipes() {
+    function recipe() {
       return {
-        recipes: {},
+        recipe: {},
         err:null,
-        getRecipes: function () {
-          let r = 0
+        apiUrl: function(){
+            return '/api/v1/recipe/'+this.recipeId
+        },
+        get recipeId(){
+            const url=window.location.href
+            return url.match(/(?<=(\/pull\/))\d*/); //#toto а если ошибка? и тут вообще это не получается?
+        },
+        getRecipe: function () {
           axios({
             method: 'get',
-            url: '/api/v1/recipes'
+            url: this.apiUrl
           })
             .then((response) => {
               this.recipes = response.data.recipes
@@ -24,8 +30,16 @@
             .catch((error) => {
               console.error(error)
             });
-          return r
-        }
+        },
+        submitRecipe: function () {
+          axios.post(this.apiUrl,this.recipe)
+            .then((response) => {
+              console.log(response.data)
+            })
+            .catch((error) => {
+              console.error(error)
+            });
+        },       
       };
     }
   </script>
@@ -42,9 +56,7 @@
     </p>
   </header>
   <main>
-    <div x-data="recipes()" x-init="getRecipes()" class="flex border-gray-200 flex-row flex-wrap mt-7">
-      <template x-for="recipe in recipes">
-      </template>
+    <div x-data="recipe()" x-init="getRecipe()" class="flex border-gray-200 flex-row flex-wrap mt-7">
     </div>
   </main>
 </body>
