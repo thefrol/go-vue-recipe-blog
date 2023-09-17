@@ -20,17 +20,17 @@ type FileStorage struct {
 
 // New связывается с указанным хранилищем в папке storageFolder.
 // Если такой папки нет, то создает
-func New(storageFolder string) FileStorage {
+func New(storageFolder string) *FileStorage {
 	if _, err := os.Stat(storageFolder); errors.Is(err, os.ErrNotExist) {
 		// такого пути нет
 		err := os.Mkdir(storageFolder, os.FileMode(os.O_RDONLY|os.O_RDWR))
 		if err != nil {
-			panic("не удалется создать хранилище в папке " + storageFolder)
+			panic("не удалется с&здать хранилище в папке " + storageFolder)
 		}
 	} else if err != nil {
 		panic("Не удалось открыть хранилище в " + storageFolder)
 	}
-	return FileStorage{folder: storageFolder}
+	return &FileStorage{folder: storageFolder}
 }
 
 func (s FileStorage) Get(key string) ([]byte, error) {
@@ -49,12 +49,14 @@ func (s FileStorage) Set(key string, value []byte) error {
 	return nil
 }
 
-func (s FileStorage) WithPrefix(prefix string) {
+func (s *FileStorage) WithPrefix(prefix string) *FileStorage {
 	s.Prefix = prefix
+	return s
 }
 
-func (s FileStorage) WithPostfix(postfix string) {
+func (s *FileStorage) WithPostfix(postfix string) *FileStorage {
 	s.Postfix = postfix
+	return s
 }
 
 // filename возвращает путь до файла с учетом срех настроен постфиксом и префиксов
