@@ -16,7 +16,7 @@ type RecipesResponse struct {
 }
 
 const (
-	storageFolder = "../assets/recipes/"
+	storageFolder = "../assets/recipes/" //todo: отправить в server
 )
 
 var store = recipes.New(storageFolder)
