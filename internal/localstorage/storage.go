@@ -26,6 +26,9 @@ func New(storageFolder string) FileStorage {
 		panic("Неправильно создано хранилище, такого пути нет")
 	}
 	return FileStorage{folder: storageFolder}
+
+	// TODO
+	// тут тоже надо проверить что папка существует, вообще а может его создавать?
 }
 
 var _ Storager = new(FileStorage)
