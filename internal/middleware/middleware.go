@@ -11,7 +11,7 @@ import (
 
 const (
 	cookieName     = "accessToken"
-	cookieToken    = "ro8BS6Hiivgzy8Xuu09JDjlNLnSLldY5"
+	cookieToken    = "ro8BS6Hiivgzy8Xuu09JDjlNLnSLldY5" // todo удалить
 	cookieLifeDays = 7
 
 	authContextParam = "auth"
