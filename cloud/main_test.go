@@ -78,7 +78,7 @@ func Test_PublicPages(t *testing.T) {
 	// это тоже в сниппеты запулить
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := httptest.NewServer(main.Router)
+			s := httptest.NewServer(main.Router) //todo тут бы адрес сервера другой поставить
 			defer s.Close()
 
 			client := resty.New()
