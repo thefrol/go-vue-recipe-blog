@@ -34,7 +34,7 @@ var store = recipes.New(storageFolder)
 func CookieAuthorization(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if findCookie(r) {
+		if validateCookie(r) {
 			rc := r.Context()
 			ctx := context.WithValue(rc, authContextParam, "ok")
 			r = r.WithContext(ctx)
@@ -64,18 +64,13 @@ func RequireAuthorization(next http.Handler) http.Handler {
 	})
 }
 
-// findCookie проверяет есть ли нужный куки в запросе и сверяет его хеш,
+// validateCookie проверяет есть ли нужный куки в запросе и сверяет его хеш,
 // с уже хранимыми хешами, если есть совпадение вернет true первым параметром
-func findCookie(r *http.Request) bool {
+func validateCookie(r *http.Request) bool {
 	c, err := r.Cookie(cookieName)
 	if err != nil {
 		fmt.Printf("Cookie %v not found in cookies \n", c)
 		return false
 	}
-	found, err := store.Token(credentials.Hash(c.Value))
-	if err != nil {
-		fmt.Printf("Token not found: %v\n", c)
-		return false
-	}
-	return found
+	return credentials.CheckToken(c.Value)
 }
