@@ -30,5 +30,3 @@ func New(storageFolder string) FileStorage {
 	// TODO
 	// тут тоже надо проверить что папка существует, вообще а может его создавать?
 }
-
-var _ Storager = new(FileStorage)
