@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"bytes"
 	"net/http"
 	"time"
 
-	"github.com/thefrol/go-vue-recipe-blog/internal/utils"
+	"github.com/thefrol/go-vue-recipe-blog/internal/credentials"
 )
 
 const (
@@ -18,13 +17,8 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() // Это очень важная часть, без этого даже не прочитается
 	login := r.FormValue("username")
 	pass := r.FormValue("password")
-	hash, err := store.Password(login)
-	if err != nil {
-		http.Error(w, "Cant authorize", http.StatusInternalServerError) // не пали контору
-		return
-	}
 
-	if bytes.Compare(utils.Hash(pass), hash) != 0 {
+	if !credentials.ValidateCredentials(login, pass) {
 		http.Error(w, "Wrong login/pass", http.StatusUnauthorized)
 		return
 	}
@@ -37,14 +31,11 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 }
 
 func makeCookie() *http.Cookie {
-	//store cookie
-	t := utils.UUID()
-	store.AddToken(utils.Hash(t))
 
 	//set cookie
 	cookie := http.Cookie{}
 	cookie.Name = cookieName
-	cookie.Value = t
+	cookie.Value = credentials.MakeToken()
 	cookie.Expires = time.Now().Add(cookieLifeDays * 24 * time.Hour)
 	cookie.Secure = false
 	cookie.HttpOnly = true

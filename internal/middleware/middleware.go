@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/thefrol/go-vue-recipe-blog/internal/localstorage"
-	"github.com/thefrol/go-vue-recipe-blog/internal/utils"
+	"github.com/thefrol/go-vue-recipe-blog/internal/credentials"
 )
 
 const (
@@ -21,20 +20,10 @@ const (
 	// и хранилище тоже например
 )
 
-const (
-	storageFolder = "../web/.storage/"
-)
-
-// сделать дефолтное хранилище TODO
-// вообще этот прикол, что мы не может хранить storageFolder в каком-то одном пакете намекает, что для рецептов нужно отдальное хранилще
-// Даже гитигнор как-то не получается адекватно написать под эти задачи
-// рецепты лежат среди очень чувствительного хранилища, тут как- бы в будущем не запутаться
-var store = localstorage.New(storageFolder)
-
 func CookieAuthorization(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if findCookie(r) {
+		if validateCookie(r) {
 			rc := r.Context()
 			ctx := context.WithValue(rc, authContextParam, "ok")
 			r = r.WithContext(ctx)
@@ -64,18 +53,13 @@ func RequireAuthorization(next http.Handler) http.Handler {
 	})
 }
 
-// findCookie проверяет есть ли нужный куки в запросе и сверяет его хеш,
+// validateCookie проверяет есть ли нужный куки в запросе и сверяет его хеш,
 // с уже хранимыми хешами, если есть совпадение вернет true первым параметром
-func findCookie(r *http.Request) bool {
+func validateCookie(r *http.Request) bool {
 	c, err := r.Cookie(cookieName)
 	if err != nil {
 		fmt.Printf("Cookie %v not found in cookies \n", c)
 		return false
 	}
-	found, err := store.Token(utils.Hash(c.Value))
-	if err != nil {
-		fmt.Printf("Token not found: %v\n", c)
-		return false
-	}
-	return found
+	return credentials.CheckToken(c.Value)
 }
