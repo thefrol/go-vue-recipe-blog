@@ -35,6 +35,11 @@ func init() {
 	// api
 	Router.Route("/api/v1/", func(r chi.Router) {
 		r.Get("/recipes", handlers.Recipes)
+		r.Route("/recipe/", func(r chi.Router) {
+			r.Get("/{id}", handlers.GetRecipe)
+			r.With(middleware.RequireAuthorization).Post("/{id}", handlers.PostRecipe)
+		})
+
 	})
 }
 

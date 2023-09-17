@@ -20,7 +20,7 @@ func (s FileStorage) Token(hash []byte) (found bool, err error) {
 
 	for _, h := range bytes.Split(bb, []byte("\n")) {
 		h = bytes.TrimSpace(h)
-		if bytes.Compare(hash, h) == 0 {
+		if bytes.Equal(hash, h) {
 			return true, nil
 		}
 	}
