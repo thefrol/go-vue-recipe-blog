@@ -12,7 +12,7 @@ import (
 func (s FileStorage) Recipe(id string) (*data.Recipe, error) {
 	// TODO
 	// на данный момент он выдает рецепт с постфиксом .json, c этим надо разобраться, и не в роутинге
-	bb, err := os.ReadFile(path.Join(s.recipeFolder(), id))
+	bb, err := os.ReadFile(path.Join(s.folder, id))
 	if err != nil {
 		return nil, fmt.Errorf("сant read recipe with id %v: %+v", id, err)
 	}
@@ -27,7 +27,7 @@ func (s FileStorage) SetRecipe(id string, r data.Recipe) error {
 	if err != nil {
 		return err
 	}
-	os.WriteFile(path.Join(s.recipeFolder(), id), json, os.FileMode(os.O_WRONLY|os.O_CREATE))
+	os.WriteFile(path.Join(s.folder, id), json, os.FileMode(os.O_WRONLY|os.O_CREATE))
 	return nil
 
 	// TODO
@@ -40,7 +40,7 @@ func (s FileStorage) SetRecipe(id string, r data.Recipe) error {
 }
 
 func (s FileStorage) Recipes() (recipes []data.Recipe, err error) {
-	files, err := os.ReadDir(s.recipeFolder())
+	files, err := os.ReadDir(s.folder)
 	if err != nil {
 		return nil, fmt.Errorf("сant read recipes folder: %+v", err)
 	}
@@ -53,8 +53,4 @@ func (s FileStorage) Recipes() (recipes []data.Recipe, err error) {
 		recipes = append(recipes, *r)
 	}
 	return
-}
-
-func (s FileStorage) recipeFolder() string {
-	return path.Join(s.folder, recipeFolderName)
 }

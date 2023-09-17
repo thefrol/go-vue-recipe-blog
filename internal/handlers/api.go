@@ -16,7 +16,7 @@ type RecipesResponse struct {
 }
 
 const (
-	storageFolder = "../web/.storage/"
+	storageFolder = "../assets/recipes/"
 )
 
 var store = recipes.New(storageFolder)
