@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/thefrol/go-vue-recipe-blog/internal/credentials"
 	"github.com/thefrol/go-vue-recipe-blog/internal/utils"
 )
 
@@ -24,7 +25,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if bytes.Compare(utils.Hash(pass), hash) != 0 {
+	if bytes.Compare(credentials.Hash(pass), hash) != 0 {
 		http.Error(w, "Wrong login/pass", http.StatusUnauthorized)
 		return
 	}
@@ -39,7 +40,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 func makeCookie() *http.Cookie {
 	//store cookie
 	t := utils.UUID()
-	store.AddToken(utils.Hash(t))
+	store.AddToken(credentials.Hash(t))
 
 	//set cookie
 	cookie := http.Cookie{}

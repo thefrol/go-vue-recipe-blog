@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/thefrol/go-vue-recipe-blog/internal/filestorage"
-	"github.com/thefrol/go-vue-recipe-blog/internal/utils"
 )
 
 type Keyer interface {
@@ -29,7 +28,7 @@ func LocalTokens(folder string) *Tokens {
 // acl можно задать по системе путей /admin/moderator/recipe.editor, -
 // такой человек получит права редактора рецептов
 func (t Tokens) Get(token string, tokendata interface{}) (bool, error) {
-	data, err := t.storage.Get(string(utils.Hash(token)))
+	data, err := t.storage.Get(string(Hash(token)))
 	if err != nil {
 		return false, err
 	}

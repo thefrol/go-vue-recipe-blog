@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/thefrol/go-vue-recipe-blog/internal/credentials"
 	"github.com/thefrol/go-vue-recipe-blog/internal/localstorage"
-	"github.com/thefrol/go-vue-recipe-blog/internal/utils"
 )
 
 const (
@@ -72,7 +72,7 @@ func findCookie(r *http.Request) bool {
 		fmt.Printf("Cookie %v not found in cookies \n", c)
 		return false
 	}
-	found, err := store.Token(utils.Hash(c.Value))
+	found, err := store.Token(credentials.Hash(c.Value))
 	if err != nil {
 		fmt.Printf("Token not found: %v\n", c)
 		return false
