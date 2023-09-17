@@ -1,4 +1,4 @@
-package localstorage
+package recipes
 
 import (
 	"encoding/json"

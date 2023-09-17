@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/thefrol/go-vue-recipe-blog/internal/data"
-	"github.com/thefrol/go-vue-recipe-blog/internal/localstorage"
+	"github.com/thefrol/go-vue-recipe-blog/internal/recipes"
 )
 
 type RecipesResponse struct {
@@ -19,7 +19,7 @@ const (
 	storageFolder = "../web/.storage/"
 )
 
-var store = localstorage.New(storageFolder)
+var store = recipes.New(storageFolder)
 
 // my token "123lasudhjnqwoealskndlajwjelijqwe" my pass "mypass"
 

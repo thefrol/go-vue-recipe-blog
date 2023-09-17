@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/thefrol/go-vue-recipe-blog/internal/credentials"
-	"github.com/thefrol/go-vue-recipe-blog/internal/localstorage"
+	"github.com/thefrol/go-vue-recipe-blog/internal/recipes"
 )
 
 const (
@@ -29,7 +29,7 @@ const (
 // вообще этот прикол, что мы не может хранить storageFolder в каком-то одном пакете намекает, что для рецептов нужно отдальное хранилще
 // Даже гитигнор как-то не получается адекватно написать под эти задачи
 // рецепты лежат среди очень чувствительного хранилища, тут как- бы в будущем не запутаться
-var store = localstorage.New(storageFolder)
+var store = recipes.New(storageFolder)
 
 func CookieAuthorization(next http.Handler) http.Handler {
 
