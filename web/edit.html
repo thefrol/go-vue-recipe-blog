@@ -12,12 +12,16 @@
       return {
         recipe: {},
         err:null,
+        isNew:false,
         get apiUrl(){
             return '/api/v1/recipe/'+this.recipeId
         },
         get recipeId(){
             const url=window.location.pathname
             return url.replace(/^\/edit\//, ''); //#toto а если ошибка? и тут вообще это не получается?
+        },
+        get buttonCaption(){
+          return this.isNew? "Создать": "Сохранить"
         },
         getRecipe: function () {
           axios({
@@ -29,7 +33,18 @@
               console.log(this.recipe) // todo если такого нецепта нет, создать типовой
             })
             .catch((error) => {
-              console.error(error) // todo ошибка при сохранении
+              if(error.request.status==404){
+                console.log("новый рецепт")
+                this.recipe={
+                  name: "Новый рецепт",
+                  text: "смешайте",
+                  tags:[]
+                }
+                this.isNew=true
+                return
+              }
+              console.error(error)
+              err="Ошибка" // todo что-то с этим сделать
             });
         },
         submitRecipe: function () {
@@ -37,6 +52,7 @@
           axios.post(this.apiUrl,this.recipe)
             .then((response) => {
               console.log(response.data)
+              this.isNew=false
             })
             .catch((error) => {
               console.error(error)
@@ -67,7 +83,7 @@
           <p x-text="tag"></p>
         </template>
       </div>
-        <button class="bg-teal-600 rounded-3xl p-2 text-xl text-stone-50" @click="submitRecipe()">Сохранить</button>
+        <button class="bg-teal-600 rounded-3xl p-2 text-xl text-stone-50" @click="submitRecipe()" x-text="buttonCaption">Сохранить</button>
     </div>
   </main>
 </body>
