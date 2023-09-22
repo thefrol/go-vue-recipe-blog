@@ -52,11 +52,14 @@ func GetRecipe(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
 	recipe, err := store.Recipe(id)
-	if err != nil {
+	if err == recipes.RecipeNotExist {
+		http.Error(w, "Рецепт не найден; "+err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
 		// TODO
 		// хелпер такого вида
 		// Respond(w, Code, msg)
-		http.Error(w, "Не могу получить рецепт из хранилища;"+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Не могу получить рецепт из хранилища; "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

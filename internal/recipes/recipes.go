@@ -2,6 +2,7 @@ package recipes
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -10,6 +11,8 @@ import (
 	"github.com/thefrol/go-vue-recipe-blog/internal/data"
 )
 
+var RecipeNotExist = errors.New("recipe not exist")
+
 const recipeFileExtension = ".json"
 
 // Recipe возвращает рецепт с идентификатором id, такой рецепт лежит в файл <id>.json
@@ -17,7 +20,10 @@ const recipeFileExtension = ".json"
 //	okroshka -> okroshka.json
 func (s FileStorage) Recipe(id string) (*data.Recipe, error) {
 	bb, err := os.ReadFile(path.Join(s.folder, id+recipeFileExtension))
-	if err != nil {
+	if os.IsNotExist(err) {
+		return nil, RecipeNotExist
+	} else if err != nil {
+
 		return nil, fmt.Errorf("сant read recipe with id %v: %+v", id, err)
 	}
 
