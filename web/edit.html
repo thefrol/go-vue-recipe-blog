@@ -74,16 +74,17 @@
     </p>
   </header>
   <main>
-    <div x-data="recipe()" x-init="getRecipe()" class="border-gray-200 flex-row flex-wrap mt-7">
-      <div class="mb-4">
-        <input class="text-3xl block mb-4" x-model="recipe.name">
-        <textarea class="w-2/3 block h-40 mb-4" x-model="recipe.text"></textarea>
+    <div x-data="recipe()" x-init="getRecipe()" class="bg-teal-100  p-8 rounded-3xl m-7">
+      <div class="flex flex-columns flex-wrap">
+        <button class="flex-0 self-end mb-4 px-8 bg-teal-600 rounded-3xl p-2 text-xl text-stone-50" @click="submitRecipe()" x-text="buttonCaption"></button>
+        <input class="flex-0 min-w-full text-3xl px-8  py-4 rounded-3xl mb-4" x-model="recipe.name">
+        <textarea class="flex-0 min-w-full text-xl h-40 px-8  py-4 rounded-3xl mb-4" x-model="recipe.text"></textarea>
 
         <template x-for="tag in recipe.tags" >
           <p x-text="tag"></p>
         </template>
       </div>
-        <button class="bg-teal-600 rounded-3xl p-2 text-xl text-stone-50" @click="submitRecipe()" x-text="buttonCaption">Сохранить</button>
+
     </div>
   </main>
 </body>
