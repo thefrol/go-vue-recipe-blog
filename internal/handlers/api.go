@@ -3,11 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
-	"os"
-	"path"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/thefrol/go-vue-recipe-blog/internal/data"
+	"github.com/thefrol/go-vue-recipe-blog/internal/recipes"
 )
 
 type RecipesResponse struct {
@@ -15,38 +16,25 @@ type RecipesResponse struct {
 }
 
 const (
-	recipesFolder = "../web/recipe/"
+	storageFolder = "../assets/recipes/" //todo: отправить в server
 )
 
-func RecipesHandler(w http.ResponseWriter, r *http.Request) {
-	files, err := os.ReadDir(recipesFolder)
-	if err != nil {
-		fmt.Printf("Cant read recipes folder: %+v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+var store = recipes.New(storageFolder)
 
-	var recipes []data.Recipe
+// my token "123lasudhjnqwoealskndlajwjelijqwe" my pass "mypass"
 
-	for _, f := range files {
-		if f.IsDir() {
-			continue
-		}
-
-		bb, err := os.ReadFile(path.Join(recipesFolder, f.Name()))
-		if err != nil {
-			fmt.Printf("Cant read recipes file %v: %+v", f.Name(), err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		recipe := data.Recipe{}
-		json.Unmarshal(bb, &recipe)
-		recipes = append(recipes, recipe)
-	}
-
+func Recipes(w http.ResponseWriter, r *http.Request) {
 	// TODO
 	// нейросеть считает каллорийность этих блюд по рецепту))
+
+	recipes, err := store.Recipes()
+	if err != nil {
+		// TODO
+		// хелпер такого вида
+		// Respond(w, Code, msg)
+		http.Error(w, "Не могу получить рецепты из хранилища;"+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	response := RecipesResponse{Recipes: recipes}
 	bb, err := json.Marshal(response)
@@ -58,4 +46,69 @@ func RecipesHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "appliation/json")
 	w.Write([]byte(bb))
+}
+
+func GetRecipe(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	recipe, err := store.Recipe(id)
+	if err == recipes.RecipeNotExist {
+		http.Error(w, "Рецепт не найден; "+err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
+		// TODO
+		// хелпер такого вида
+		// Respond(w, Code, msg)
+		http.Error(w, "Не могу получить рецепт из хранилища; "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//TODO это тоже можно выделить в функцию!
+	response := recipe
+	bb, err := json.Marshal(response)
+	if err != nil {
+		fmt.Printf("Cant marshal a json with %v recipe: %+v", id, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "appliation/json")
+	w.Write([]byte(bb))
+}
+
+func PostRecipe(w http.ResponseWriter, r *http.Request) { // todo, а что если есть какая-то структура с функциями или мапа! Типа поторая сразу содержит get, post, delete. уже похоже на rpc
+	id := chi.URLParam(r, "id")
+
+	if r.Body == nil {
+		http.Error(w, "пришло пустое тело", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	body, err := io.ReadAll(r.Body) // todo посмотреть как это делали в практикуме
+	if err != nil {
+		// TODO
+		// хелпер такого вида
+		// Respond(w, Code, msg)
+		http.Error(w, "Не могу получить рецепт из хранилища;"+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	recipe := new(data.Recipe)
+	err = json.Unmarshal(body, recipe)
+	if err != nil {
+
+		//TODO это тоже можно выделить в функцию!
+		fmt.Printf("Cant unmarshal a json with %v recipe: %+v", id, err)
+		http.Error(w, "Cant unmarshal a json", http.StatusBadRequest)
+		return
+	}
+
+	err = store.SetRecipe(id, *recipe)
+	if err != nil {
+		fmt.Printf("Cant save %v recipe: %+v", id, err)
+		http.Error(w, "Cant save a recipe", http.StatusBadRequest)
+	}
+
+	w.Header().Add("Content-Type", "appliation/json")
 }
